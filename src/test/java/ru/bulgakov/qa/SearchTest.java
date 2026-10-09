@@ -1,7 +1,12 @@
 package ru.bulgakov.qa;
 
 import com.codeborne.selenide.Configuration;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import ru.bulgakov.pages.RegistrationPage;
+import ru.bulgakov.pages.YandexSearchPage;
+import ru.bulgakov.pages.YandexSearchResultPage;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byText;
@@ -25,21 +30,18 @@ public class SearchTest {
  */
        Configuration.holdBrowserOpen = true;
        Configuration.pageLoadTimeout = 50_000;
-       open("https://ya.ru/");
-       $("#text").setValue("bulgakov qa");
-       $("[type=submit]").click();
-       $(".DistributionButtonClose").click();
-       $(byText("ivanbulgakovqa.ru")).click();
 
-       sleep(3000);
-       switchTo().window(1);
-       $$(".t-menu__list li").last().click();
-       $x("/html/body/div[1]/div[42]/div/div/div[32]/div/a").click();
-       $(byText("Бегу оплачивать")).click();
-
-      sleep(20000);
-       switchTo().window(2);
-      $("[data-at='H3']").shouldHave(text("₽ 47 000.00"));
+       open("https://ya.ru/", YandexSearchPage.class)
+               .search("bulgakov qa")
+               .submit()
+               .closeDefaultBrowserSelectWindow()
+               .openLink("ivanbulgakovqa.ru")
+               .sleepAndSwitchToWindow()
+               .selectLastMenuList()
+               .clickButtonWantToQa()
+               .clickButtonToPay()
+               .sleepAndSwitchToWindowPayment()
+               .review("₽ 47 000.00");
 
     }
 
@@ -61,21 +63,20 @@ public class SearchTest {
 
        Configuration.holdBrowserOpen = true;
        Configuration.pageLoadTimeout = 50_000;
-       open("https://demoqa.com/automation-practice-form");
-       $("#firstName").setValue("Иван");
-       $("#lastName").setValue("Иванченко");
-       $("[value=Male]").click();
-       $("#userNumber").setValue("7917123456");
-       $("#state").scrollTo().click();
-       $(byText("Uttar Pradesh")).click();
-       $("#city").click();
-       $(byText("Agra")).click();
-       $("#submit").scrollTo().click();
+       open("https://demoqa.com/automation-practice-form", RegistrationPage.class)
+               .setFirstName("Иван")
+               .setLasttName("Иванченко")
+               .selectGender()
+               .setPhoneNumber("7917123456")
+               .selectState("Uttar Pradesh")
+               .selectCity("Agra")
+               .submit()
+               .reviewName("Иван" + " " + "Иванченко")
+               .reviewGender("Male")
+               .reviewPhoneNumber("7917123456")
+               .reviewStateCity("Uttar Pradesh" + " " + "Agra");
 
-       $(".table-responsive").$(byText("Student Name")).parent().shouldHave(text("Иван" + " " + "Иванченко"));
-       $(".table-responsive").$(byText("Gender")).parent().shouldHave(text("Male"));
-       $(".table-responsive").$(byText("Mobile")).parent().shouldHave(text("7917123456"));
-       $(".table-responsive").$(byText("State and City")).parent().shouldHave(text("Uttar Pradesh" + " " + "Agra"));
+
     }
 
 }
