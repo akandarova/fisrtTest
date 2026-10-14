@@ -1,15 +1,10 @@
-package ru.bulgakov.qa;
+package ru.bulgakov.pages.mentor.qa;
 
 import com.codeborne.selenide.Configuration;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import ru.bulgakov.pages.RegistrationPage;
-import ru.bulgakov.pages.YandexSearchPage;
-import ru.bulgakov.pages.YandexSearchResultPage;
+import ru.bulgakov.pages.mentor.pages.RegistrationPage;
+import ru.bulgakov.pages.mentor.pages.YandexSearchPage;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
 public class SearchTest {
@@ -28,7 +23,6 @@ public class SearchTest {
 * ...
 * 10. Проверить, что к оплате 47000
  */
-       Configuration.holdBrowserOpen = true;
        Configuration.pageLoadTimeout = 50_000;
 
        open("https://ya.ru/", YandexSearchPage.class)
@@ -61,7 +55,6 @@ public class SearchTest {
         * ...
         */
 
-       Configuration.holdBrowserOpen = true;
        Configuration.pageLoadTimeout = 50_000;
        open("https://demoqa.com/automation-practice-form", RegistrationPage.class)
                .setFirstName("Иван")
@@ -71,10 +64,10 @@ public class SearchTest {
                .selectState("Uttar Pradesh")
                .selectCity("Agra")
                .submit()
-               .reviewName("Иван" + " " + "Иванченко")
+               .checkFullName("Иван", "Иванченко")
                .reviewGender("Male")
                .reviewPhoneNumber("7917123456")
-               .reviewStateCity("Uttar Pradesh" + " " + "Agra");
+               .reviewStateCity("Uttar Pradesh", "Agra");
 
 
     }
