@@ -1,4 +1,4 @@
-package ru.bulgakov.pages;
+package ru.bulgakov.pages.mentor.pages;
 
 import com.codeborne.selenide.SelenideElement;
 
@@ -13,11 +13,17 @@ public class RegistrationResultPage {
     private final SelenideElement userStateCityResult = $(".table-responsive").$(byText("State and City")).parent();
 
 
-    public RegistrationResultPage reviewName(String name) {
-        fullNameResult.shouldHave(text("Иван" + " " + "Иванченко"));
+//    public RegistrationResultPage reviewName(String name) {
+//        fullNameResult.shouldHave(text("Иван" + " " + "Иванченко"));
+//
+//        return this;
+//    }
+    public RegistrationResultPage checkFullName(String firstName, String lastName){
+        fullNameResult.shouldHave(text(firstName + " " + lastName));
 
         return this;
     }
+
     public RegistrationResultPage reviewGender(String gender) {
     userGenderResult.shouldHave(text(gender));
 
@@ -28,8 +34,8 @@ public class RegistrationResultPage {
 
         return this;
     }
-    public RegistrationResultPage reviewStateCity(String stateCity) {
-        userStateCityResult.shouldHave(text(stateCity));
+    public RegistrationResultPage reviewStateCity(String fieldState, String fieldCity) {
+        userStateCityResult.shouldHave(text(fieldState + " " + fieldCity));
 
         return this;
     }
