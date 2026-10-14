@@ -8,15 +8,15 @@ public class YandexSearchPage {
     private final SelenideElement searchInput = $("#text");
     private final SelenideElement submitButton = $("[type=submit]");
 
-    public YandexSearchPage search(String query){
+    public YandexSearchPage setSearchQuery(String query) {
         searchInput.setValue(query);
-
         return this;
     }
-    public YandexSearchResultPage submit(){
+    public YandexSearchResultPage submit() {
         submitButton.click();
-
         return new YandexSearchResultPage();
     }
-
+    public YandexSearchResultPage search(String query) {
+        return setSearchQuery(query).submit();
+    }
 }
