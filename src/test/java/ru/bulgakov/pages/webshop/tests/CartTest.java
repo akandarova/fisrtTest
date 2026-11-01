@@ -4,13 +4,12 @@ import com.codeborne.selenide.Configuration;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.bulgakov.pages.webshop.pages.WsCartPage;
+import ru.bulgakov.pages.webshop.pages.WsItemPage;
+import ru.bulgakov.pages.webshop.pages.WsLoginPage;
 import ru.bulgakov.pages.webshop.steps.AuthSteps;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.codeborne.selenide.Selenide.open;
 import static ru.bulgakov.pages.webshop.config.Config.WEB_SHOP_URL;
 
 public class CartTest {
@@ -20,37 +19,38 @@ public class CartTest {
 
     @BeforeEach
     void beforeEach() {
+        Configuration.holdBrowserOpen = true;
         Configuration.pageLoadTimeout = 50_000;
 
         authSteps.registerNewUser();
     }
-
         @Test
         void addItemToCartTest() {
-            open(WEB_SHOP_URL);
-            $$("ul.top-menu li a").get(1).hover();
-            $(byText("Desktops")).click();
-            $$("div.product-grid div").get(0).click();
-
-            String itemName = $("[itemprop=name]").getText();
-            String itemPrice = $("[itemprop=price]").getText();
             String itemQuantity = "2";
 
-            $$("dl dd ul").get(0).$$("li input").get(0).click();
-            $(".qty-input").setValue(itemQuantity);
-            $("input.add-to-cart-button").click();
-            $("div.bar-notification.success").shouldBe(visible);
-            $("span.cart-qty").shouldHave(text("(" + itemQuantity + ")"));
-            $("a.ico-cart").click();
+            WsItemPage itemPage = open(WEB_SHOP_URL, WsLoginPage.class)
+            .openListOfComputers()
+            .chooseDesctopsComputers("Desktops")
+            .chooseItem();
 
-            $("a.product-name").shouldHave(text(itemName));
+            String itemName  = itemPage.getItemName();
 
-            String itemQuantityInCart = $("input.qty-input").getAttribute("value");
-            assertEquals(itemQuantity, itemQuantityInCart);
+            itemPage.selectProcessor(2);
+            String itemPrice = itemPage.getItemPriceWithProcessor(2);
 
-            $("span.product-subtotal").shouldHave(text(String.valueOf(
-                    Float.parseFloat(itemPrice) * Float.parseFloat(itemQuantity))));
-            System.out.println("1");
+            WsCartPage cartPage = itemPage
+
+            .inputItemQuantity(itemQuantity)
+            .addItemToCart()
+            .checkBarNotification()
+            .checkQuantityItemInCart(itemQuantity)
+            .checkCart();
+
+            cartPage
+
+            .checkItemNameInCart(itemName)
+            .checkItemQuantityInCart(itemQuantity)
+            .checkItemPriceInCart(itemPrice, itemQuantity);
         }
     }
 
